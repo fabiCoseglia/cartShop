@@ -7,7 +7,6 @@ const getAllProducts = async () =>{
         const res = await axios.get(`${API_BASE_URL}/products?limit=10`);
         if (res) {
           const products = res.data;
-          console.log(products);
           return { products };
         } else {
           throw console.log("loading data from API...");
