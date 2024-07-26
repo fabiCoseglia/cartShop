@@ -1,5 +1,10 @@
+import { useContext } from "react"
+import { CartContext } from "../context/cartContext"
 
+// eslint-disable-next-line react/prop-types
 export const CartModal = ({handleToggle}) => {
+  const {clearCart,cart,increaseItemQuantity,decreaseItemQuantity,removeItemFromCart} = useContext(CartContext);
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
     <div className="bg-white p-8 rounded-lg shadow-lg w-11/12 max-w-md">
@@ -10,30 +15,36 @@ export const CartModal = ({handleToggle}) => {
         </button>
       </div>
       <ul className="divide-y divide-gray-200">
-        <li className="py-4 flex justify-between items-center">
+        {
+          cart.length !== 0 ?
+          cart.map((product,i)=>(
+            <li className="py-4 flex justify-between items-center" key={i}>
           <div className="flex items-center">
-            <img src="https://via.placeholder.com/50" alt="Producto" className="h-12 w-12 rounded object-cover" />
+            <img src={product.image} alt="Producto" className="h-12 w-12 rounded object-cover" />
             <div className="ml-4">
-              <p className="text-sm font-medium">Nombre del Producto</p>
-              <p className="text-sm text-gray-500">$20.00</p>
+              <button className="text-sm font-medium"> {product.title} </button>
+              <p className="text-sm text-gray-500">${product.price} </p>
             </div>
           </div>
           <div className="flex items-center">
-            <button className="text-gray-600 hover:text-gray-800 px-2">-</button>
-            <span className="px-2">1</span>
-            <button className="text-gray-600 hover:text-gray-800 px-2">+</button>
-            <button className="ml-4 text-red-500 hover:text-red-700">Eliminar</button>
+            <button className="w-4 bg-red-500 hover:bg-red-600 text-white rounded-md" onClick={()=>decreaseItemQuantity(product.id)}>-</button>
+            <span className="px-2"> {product.quantity} </span>
+            <button className=" w-4  bg-green-500 hover:bg-green-600 text-white rounded-md" onClick={()=>increaseItemQuantity(product.id)}>+</button>
+            <button className="ml-4 text-red-500 hover:text-red-700" onClick={()=>removeItemFromCart(product.id)}>Delete</button>
           </div>
         </li>
-        {/* Repite este bloque para más productos */}
+          ))
+          : <p className="text-gray-400 text-center">Empty cart</p>
+        }
       </ul>
+      
       <div className="mt-4">
         <div className="flex justify-between items-center font-medium">
           <span>Total:</span>
-          <span>$40.00</span>
+          <span className="font-bold">${cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2)}</span>
         </div>
-        <button className="mt-4 w-full bg-violet-500 hover:bg-violet-600 text-white py-2 rounded-lg">Ir a pagar</button>
-        <button className="mt-2 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg">Vaciar carrito</button>
+        <button className="mt-4 w-full bg-violet-500 hover:bg-violet-600 text-white py-2 rounded-lg">Checkout</button>
+        <button className="mt-2 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg" onClick={clearCart}>Clear cart</button>
       </div>
     </div>
   </div>
